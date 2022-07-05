@@ -1,40 +1,53 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
+using System;
+using UnityEngine.InputSystem;
+using Unity.Netcode;
 
 public class InputManager : NetworkBehaviour
 {
-    [HideInInspector] public Controls controls;
+    public Controls controls;
 
-    /*private void Awake()
-    {
-        if(!IsLocalPlayer)
-        {
-            enabled = false;
-        }
-    }*/
+    public static event Action ShiftUp;
+    public static event Action ShiftDown;
 
-    void Awake()
+    public float accelerationInput;
+    public float steeringInput;
+
+    private void Awake()
     {
         controls = new Controls();
+        controls.Enable();
     }
 
-
-    private void Start()
-    {
-        if (!IsLocalPlayer)
-        {
-            enabled = false;
-        }
-    }
     private void OnEnable()
     {
         controls.Enable();
+        controls.Main.GearShiftingUp.performed += OnShiftUp;
+        controls.Main.GearShiftingDown.performed += OnShiftDown;
     }
 
     private void OnDisable()
     {
         controls.Disable();
+        controls.Main.GearShiftingUp.performed -= OnShiftUp;
+        controls.Main.GearShiftingDown.performed -= OnShiftDown;
+    }
+
+    private void Update()
+    {
+        accelerationInput = controls.Main.CarMovement.ReadValue<Vector2>().y;
+        steeringInput = controls.Main.CarMovement.ReadValue<Vector2>().x;
+    }
+
+    private void OnShiftUp(InputAction.CallbackContext ctx)
+    {
+        ShiftUp?.Invoke();
+    }
+
+    private void OnShiftDown(InputAction.CallbackContext ctx)
+    {
+        ShiftDown?.Invoke();
     }
 }
