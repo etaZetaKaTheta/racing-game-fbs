@@ -1449,6 +1449,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   input: {fileID: 3194806834256625796}
   controller: {fileID: 3194806834256625797}
+  cam: {fileID: 3194806834009300188}
 --- !u!114 &3194806834256625853
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,6 +7,7 @@ public class DisableOnConnect : NetworkBehaviour
 {
     [SerializeField] private InputManager input;
     [SerializeField] private CarController controller;
+    [SerializeField] private GameObject cam;
 
 
     private void Start()
@@ -14,5 +15,6 @@ public class DisableOnConnect : NetworkBehaviour
         if (IsLocalPlayer) { return; }
         input.enabled = false;
         controller.enabled = false;
+        cam.SetActive(false);
     }
 }

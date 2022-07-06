@@ -5,24 +5,25 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using TMPro;
 
-public class MenuUI : NetworkBehaviour
+public class MenuUI : MonoBehaviour
 {
     [SerializeField] private UnityTransport transport;
+    [SerializeField] private NetworkManager networkManager;
     [SerializeField] private TMP_InputField inputIP;
-    [SerializeField] private Camera cam;
+    [SerializeField] private GameObject cam;
     public void StartHost()
     {
         transport.SetConnectionData(inputIP.text, 18769);
-        NetworkManager.Singleton.StartHost();
-        cam.enabled = false;
+        networkManager.StartHost();
+        cam.SetActive(false);
         gameObject.SetActive(false);
     }
 
     public void StartClient()
     {
         transport.SetConnectionData(inputIP.text, 18769);
-        NetworkManager.Singleton.StartClient();
-        cam.enabled = false;
+        networkManager.StartClient();
+        cam.SetActive(false);
         gameObject.SetActive(false);
     }
 }
