@@ -44,6 +44,9 @@ public class CarController : NetworkBehaviour
     [SerializeField] private TMP_Text currentGearField;
     [SerializeField] private TMP_Text wheelRPMField;
 
+    [Header("Aerodynamics")]
+    [SerializeField] private float downforce = 10.0f;
+
     [Header("Sounds")]
     [SerializeField] private AudioSource engineSound;
     [SerializeField] private AudioSource engineRedlineSound;
@@ -111,8 +114,10 @@ public class CarController : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        wheels[2].wheelCollider.motorTorque = -currentDriveTorque / 2;
-        wheels[3].wheelCollider.motorTorque = -currentDriveTorque / 2;
+        wheels[2].wheelCollider.motorTorque = currentDriveTorque / 2;
+        wheels[3].wheelCollider.motorTorque = currentDriveTorque / 2;
+
+        rb.AddForce(Vector3.down * downforce, ForceMode.Force);
 
         UpdateWheels();
     }
@@ -226,7 +231,7 @@ public class CarController : NetworkBehaviour
     {
         foreach (float currentRatio in gears)
         {
-            maxVelocities.Add(Convert.ToInt16((maxRPM * (1.0f / currentRatio) * (1.0f / differentialRatio)) * 0.34f * ((2.0f * Mathf.PI) / 60.0f) * 3.6f));
+            maxVelocities.Add(Convert.ToInt16((maxRPM * (1.0f / currentRatio) * (1.0f / differentialRatio)) * wheels[2].wheelCollider.radius * ((2.0f * Mathf.PI) / 60.0f) * 3.6f));
         }
     }
 
