@@ -11,6 +11,7 @@ public class InputManager : NetworkBehaviour
 
     public static event Action ShiftUp;
     public static event Action ShiftDown;
+    public static event Action RestartButtonPressed;
 
     public float accelerationInput;
     public float steeringInput;
@@ -21,18 +22,20 @@ public class InputManager : NetworkBehaviour
         controls.Enable();
     }
 
-    private void OnEnable()
+    public override void OnNetworkSpawn()
     {
         controls.Enable();
         controls.Main.GearShiftingUp.performed += OnShiftUp;
         controls.Main.GearShiftingDown.performed += OnShiftDown;
+        controls.Main.Restart.performed += RestartPosition;
     }
 
-    private void OnDisable()
+    public override void OnNetworkDespawn()
     {
         controls.Disable();
         controls.Main.GearShiftingUp.performed -= OnShiftUp;
         controls.Main.GearShiftingDown.performed -= OnShiftDown;
+        controls.Main.Restart.performed -= RestartPosition;
     }
 
     private void Update()
@@ -49,5 +52,10 @@ public class InputManager : NetworkBehaviour
     private void OnShiftDown(InputAction.CallbackContext ctx)
     {
         ShiftDown?.Invoke();
+    }
+
+    private void RestartPosition(InputAction.CallbackContext ctx)
+    {
+        RestartButtonPressed?.Invoke();
     }
 }

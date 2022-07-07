@@ -1,8 +1,6 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using TMPro;
 using System;
 using Unity.Netcode;
@@ -43,9 +41,15 @@ public class CarController : NetworkBehaviour
     [SerializeField] private TMP_Text rpmField;
     [SerializeField] private TMP_Text currentGearField;
     [SerializeField] private TMP_Text wheelRPMField;
+    [SerializeField] private float gearShiftDelay = 0.5f;
+    private bool isAllowedToShift = true;
 
     [Header("Aerodynamics")]
     [SerializeField] private float downforce = 10.0f;
+
+    [Header("Automatic Transmission")]
+    [SerializeField] private float downShiftRPM = 5000.0f;
+    [SerializeField] private bool isAutomatic = false;
 
     [Header("Sounds")]
     [SerializeField] private AudioSource engineSound;
@@ -79,7 +83,7 @@ public class CarController : NetworkBehaviour
             wheel.wheelCollider.ConfigureVehicleSubsteps(10.0f, 8, 6);
         }
         
-        currentGear = 0;
+        currentGear = 1;
 
         CalculateMaxVelocities();
         slope = (pitchMax - pitchMin) / (maxRPM - minRPM);
@@ -106,8 +110,8 @@ public class CarController : NetworkBehaviour
 
         currentVelocity = rb.velocity.magnitude * 3.6f;
         velocityField.text = "KM/H: " + Convert.ToInt16(currentVelocity);
-        rpmField.text = "RPM: " + Convert.ToInt32(currentRPM);
-        currentGearField.text = "Gear: " + currentGear;
+        rpmField.text = "RPM: " + Convert.ToInt16(currentRPM);
+        currentGearField.text = "Gang: " + currentGear;
 
         SetEngineSoundPitch();
     }
@@ -171,6 +175,10 @@ public class CarController : NetworkBehaviour
         {
             currentRPM = maxRPM;
             engineRedlineSound.mute = false;
+            if (isAutomatic)
+            {
+                ShiftGearUp();
+            }
         }
         else
         {
@@ -185,6 +193,10 @@ public class CarController : NetworkBehaviour
         {
             engineDecelSound.mute = true;
             engineSound.mute = false;
+        }
+        if (currentRPM <= downShiftRPM && isAutomatic)
+        {
+            ShiftGearDown();
         }
     }
 
@@ -215,18 +227,19 @@ public class CarController : NetworkBehaviour
 
     private void ShiftGearUp()
     {
-        if (currentGear >= gears.Length - 1) { return; }
+        if (currentGear >= gears.Length - 1 || !isAllowedToShift) { return; }
         currentGear++;
         currentGearRatio = gears[currentGear];
         engineTurboSound.Play();
+        StartCoroutine(ToggleShiftingDelay());
     }
 
     private void ShiftGearDown()
     {
-        if (currentGear == gears[0]) { return; }
+        if (currentGear == gears[0] || !isAllowedToShift) { return; }
         currentGear--;
         currentGearRatio = gears[currentGear];
-        engineTurboSound.Play();
+        StartCoroutine(ToggleShiftingDelay());
     }
 
     private void CalculateMaxVelocities()
@@ -242,5 +255,14 @@ public class CarController : NetworkBehaviour
         float buffer = pitchMin + slope * (currentRPM - minRPM);
         engineSound.pitch = buffer;
         engineDecelSound.pitch = buffer;
+    }
+
+    private IEnumerator ToggleShiftingDelay()
+    {
+        isAllowedToShift = false;
+
+        yield return new WaitForSeconds(gearShiftDelay);
+
+        isAllowedToShift = true;
     }
 }

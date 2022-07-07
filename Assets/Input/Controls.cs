@@ -62,6 +62,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Restart"",
+                    ""type"": ""Button"",
+                    ""id"": ""b64caec0-4ca2-4984-9f80-1e4c32f18fac"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -251,6 +260,28 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""GearShiftingDown"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""439fdb4a-6c22-4c37-9d9f-3a481fe38e0a"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Restart"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9e554165-e1c4-42f5-8339-580064dcae3a"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Restart"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -263,6 +294,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_Main_CarBreaking = m_Main.FindAction("CarBreaking", throwIfNotFound: true);
         m_Main_GearShiftingUp = m_Main.FindAction("GearShiftingUp", throwIfNotFound: true);
         m_Main_GearShiftingDown = m_Main.FindAction("GearShiftingDown", throwIfNotFound: true);
+        m_Main_Restart = m_Main.FindAction("Restart", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -326,6 +358,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Main_CarBreaking;
     private readonly InputAction m_Main_GearShiftingUp;
     private readonly InputAction m_Main_GearShiftingDown;
+    private readonly InputAction m_Main_Restart;
     public struct MainActions
     {
         private @Controls m_Wrapper;
@@ -334,6 +367,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @CarBreaking => m_Wrapper.m_Main_CarBreaking;
         public InputAction @GearShiftingUp => m_Wrapper.m_Main_GearShiftingUp;
         public InputAction @GearShiftingDown => m_Wrapper.m_Main_GearShiftingDown;
+        public InputAction @Restart => m_Wrapper.m_Main_Restart;
         public InputActionMap Get() { return m_Wrapper.m_Main; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -355,6 +389,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @GearShiftingDown.started -= m_Wrapper.m_MainActionsCallbackInterface.OnGearShiftingDown;
                 @GearShiftingDown.performed -= m_Wrapper.m_MainActionsCallbackInterface.OnGearShiftingDown;
                 @GearShiftingDown.canceled -= m_Wrapper.m_MainActionsCallbackInterface.OnGearShiftingDown;
+                @Restart.started -= m_Wrapper.m_MainActionsCallbackInterface.OnRestart;
+                @Restart.performed -= m_Wrapper.m_MainActionsCallbackInterface.OnRestart;
+                @Restart.canceled -= m_Wrapper.m_MainActionsCallbackInterface.OnRestart;
             }
             m_Wrapper.m_MainActionsCallbackInterface = instance;
             if (instance != null)
@@ -371,6 +408,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @GearShiftingDown.started += instance.OnGearShiftingDown;
                 @GearShiftingDown.performed += instance.OnGearShiftingDown;
                 @GearShiftingDown.canceled += instance.OnGearShiftingDown;
+                @Restart.started += instance.OnRestart;
+                @Restart.performed += instance.OnRestart;
+                @Restart.canceled += instance.OnRestart;
             }
         }
     }
@@ -381,5 +421,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnCarBreaking(InputAction.CallbackContext context);
         void OnGearShiftingUp(InputAction.CallbackContext context);
         void OnGearShiftingDown(InputAction.CallbackContext context);
+        void OnRestart(InputAction.CallbackContext context);
     }
 }
