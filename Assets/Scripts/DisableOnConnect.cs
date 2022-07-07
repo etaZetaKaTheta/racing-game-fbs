@@ -8,6 +8,8 @@ public class DisableOnConnect : NetworkBehaviour
     [SerializeField] private InputManager input;
     [SerializeField] private CarController controller;
     [SerializeField] private GameObject cam;
+    [SerializeField] private GameObject carUI;
+    [SerializeField] private AudioSource[] audioSources;
 
 
     private void Start()
@@ -16,5 +18,10 @@ public class DisableOnConnect : NetworkBehaviour
         input.enabled = false;
         controller.enabled = false;
         cam.SetActive(false);
+        carUI.SetActive(false);
+        foreach (AudioSource src in audioSources)
+        {
+            src.enabled = false;
+        }
     }
 }

@@ -215,6 +215,7 @@ public class CarController : NetworkBehaviour
 
     private void ShiftGearUp()
     {
+        if (currentGear >= gears.Length - 1) { return; }
         currentGear++;
         currentGearRatio = gears[currentGear];
         engineTurboSound.Play();
@@ -222,6 +223,7 @@ public class CarController : NetworkBehaviour
 
     private void ShiftGearDown()
     {
+        if (currentGear == gears[0]) { return; }
         currentGear--;
         currentGearRatio = gears[currentGear];
         engineTurboSound.Play();
