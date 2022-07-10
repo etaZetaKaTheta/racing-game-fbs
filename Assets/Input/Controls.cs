@@ -71,6 +71,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PauseMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""475f23c3-5807-463e-8c1b-9bd5d218d336"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -282,6 +291,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""Restart"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1bb4a496-a047-411c-a31a-a657110a98f6"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PauseMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -295,6 +315,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_Main_GearShiftingUp = m_Main.FindAction("GearShiftingUp", throwIfNotFound: true);
         m_Main_GearShiftingDown = m_Main.FindAction("GearShiftingDown", throwIfNotFound: true);
         m_Main_Restart = m_Main.FindAction("Restart", throwIfNotFound: true);
+        m_Main_PauseMenu = m_Main.FindAction("PauseMenu", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -359,6 +380,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Main_GearShiftingUp;
     private readonly InputAction m_Main_GearShiftingDown;
     private readonly InputAction m_Main_Restart;
+    private readonly InputAction m_Main_PauseMenu;
     public struct MainActions
     {
         private @Controls m_Wrapper;
@@ -368,6 +390,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @GearShiftingUp => m_Wrapper.m_Main_GearShiftingUp;
         public InputAction @GearShiftingDown => m_Wrapper.m_Main_GearShiftingDown;
         public InputAction @Restart => m_Wrapper.m_Main_Restart;
+        public InputAction @PauseMenu => m_Wrapper.m_Main_PauseMenu;
         public InputActionMap Get() { return m_Wrapper.m_Main; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -392,6 +415,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @Restart.started -= m_Wrapper.m_MainActionsCallbackInterface.OnRestart;
                 @Restart.performed -= m_Wrapper.m_MainActionsCallbackInterface.OnRestart;
                 @Restart.canceled -= m_Wrapper.m_MainActionsCallbackInterface.OnRestart;
+                @PauseMenu.started -= m_Wrapper.m_MainActionsCallbackInterface.OnPauseMenu;
+                @PauseMenu.performed -= m_Wrapper.m_MainActionsCallbackInterface.OnPauseMenu;
+                @PauseMenu.canceled -= m_Wrapper.m_MainActionsCallbackInterface.OnPauseMenu;
             }
             m_Wrapper.m_MainActionsCallbackInterface = instance;
             if (instance != null)
@@ -411,6 +437,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @Restart.started += instance.OnRestart;
                 @Restart.performed += instance.OnRestart;
                 @Restart.canceled += instance.OnRestart;
+                @PauseMenu.started += instance.OnPauseMenu;
+                @PauseMenu.performed += instance.OnPauseMenu;
+                @PauseMenu.canceled += instance.OnPauseMenu;
             }
         }
     }
@@ -422,5 +451,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnGearShiftingUp(InputAction.CallbackContext context);
         void OnGearShiftingDown(InputAction.CallbackContext context);
         void OnRestart(InputAction.CallbackContext context);
+        void OnPauseMenu(InputAction.CallbackContext context);
     }
 }

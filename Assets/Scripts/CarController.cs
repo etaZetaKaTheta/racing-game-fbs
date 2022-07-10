@@ -49,7 +49,7 @@ public class CarController : NetworkBehaviour
 
     [Header("Automatic Transmission")]
     [SerializeField] private float downShiftRPM = 5000.0f;
-    [SerializeField] private bool isAutomatic = false;
+    public bool isAutomatic = false;
 
     [Header("Sounds")]
     [SerializeField] private AudioSource engineSound;
@@ -84,6 +84,7 @@ public class CarController : NetworkBehaviour
         }
         
         currentGear = 1;
+        currentGearRatio = gears[currentGear];
 
         CalculateMaxVelocities();
         slope = (pitchMax - pitchMin) / (maxRPM - minRPM);

@@ -12,35 +12,23 @@ public class DisableOnConnect : NetworkBehaviour
     [SerializeField] private GameObject carCam;
     [SerializeField] private GameObject carUI;
     [SerializeField] private AudioSource[] audioSources;
-    [SerializeField] private TMP_Text nameShield;
-
-    private NetworkVariable<FixedString64Bytes> displayName = new NetworkVariable<FixedString64Bytes>();
 
     private Vector3 startPosition;
     private Rigidbody rb;
+    private GameObject camBuffer;
 
     public override void OnNetworkSpawn()
     {
-        if (IsLocalPlayer) 
+        if (IsLocalPlayer)
         {
             TryGetComponent(out rb);
             startPosition = transform.position;
             TeleportWithRandomOffset();
             RespawnTrigger.TriggerEntered += TeleportWithRandomOffset;
             InputManager.RestartButtonPressed += TeleportWithRandomOffset;
-            displayName.OnValueChanged += HandleNameChanged;
-            GameObject buffer = Instantiate(carCam);
-            buffer.GetComponent<CameraFollow>().target = transform;
-            return; 
-        }
-
-        if (IsServer)
-        {
-            PlayerData? playerData = MenuUI.GetPlayerData(OwnerClientId);
-            if (playerData.HasValue)
-            {
-                displayName.Value = playerData.Value.PlayerName;
-            }
+            camBuffer = Instantiate(carCam);
+            camBuffer.GetComponent<CameraFollow>().target = transform;
+            return;
         }
 
         Destroy(input);
@@ -58,7 +46,6 @@ public class DisableOnConnect : NetworkBehaviour
         {
             RespawnTrigger.TriggerEntered -= TeleportWithRandomOffset;
             InputManager.RestartButtonPressed -= TeleportWithRandomOffset;
-            displayName.OnValueChanged -= HandleNameChanged;
         }
     }
 
@@ -67,10 +54,5 @@ public class DisableOnConnect : NetworkBehaviour
         rb.velocity = Vector3.zero;
         Vector3 ranPos = new Vector3(startPosition.x + Random.Range(1, 10), startPosition.y, startPosition.z + Random.Range(1, 10));
         transform.position = ranPos;
-    }
-
-    private void HandleNameChanged(FixedString64Bytes oldName, FixedString64Bytes newName)
-    {
-        nameShield.text = newName.ToString();
     }
 }
